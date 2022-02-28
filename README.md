@@ -39,4 +39,4 @@ A comparison tool to quantify all changes made in Bitcoin over the past few deca
 | bitcoin-0.21.1       | 2059          | 27313181           | 1327                               | 11606475            | \* | 22400              | 8470              | 127               | 6.17%                   | 8674266           | 31.76%                      | \* | 1845                | 634                | 53                 | 3.99%                    | 1630172                | 14.05%                   |
 | bitcoin-22.0         | 2205          | 28362003           | 1432                               | 12546038            | \* | 131696             | 129836            | 1381              | 62.63%                  | 21394510          | 75.43%                      | \* | 46319               | 22534              | 983                | 68.65%                   | 10467719               | 83.43%                   |
 
-The complete table can be found at [logDirectoryOutput.xlsx](logDirectoryOutput.xlsx).
+The complete table (including an extension histogram and color coding) can be found at [logDirectoryOutput.xlsx](logDirectoryOutput.xlsx).
