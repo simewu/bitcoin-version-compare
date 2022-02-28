@@ -1,10 +1,13 @@
 import os
 import re
 import sys
-import difflib
-import filecmp
-import itertools
-#import charmap
+
+
+isCodeFileRe = r'(.*\.cpp|.*\.h|.*\.py|.*\.c|.*\.sh)'
+
+# Send a command to the terminal
+def terminal(cmd):
+	return os.popen(cmd).read()
 
 # Given a regular expression, list the directories that match it, and ask for user input
 def selectDir(regex, subdirs = False):
@@ -89,72 +92,76 @@ def listDirectories(regex, subdirs = False, reverse = True):
 	return dirs
 
 
-# Taken from https://gist.github.com/amorton/1024636
-def compareDirectories(expected_dir, actual_dir, header=None):
-	"""Compares two directories and diffs any different files.
-	
-	The file list of both directories must match and the files must match.
-	Sub directories are not considered as I don't need to in my case.
-	
-	The diff will not show that a file was deleted from one side. It shows
-	that all the lines were removed.
-	
-	:raises: AssertionError if there are differences. Error will 
-	contain the diff as it's message.  
-	
-	:param expected_dir: directory of expected files
-	
-	:param actual_dir: directory of actual files
-	
-	:param header: Optional string header to prepend to the diff.
-	"""
-	
-	if os.path.exists(expected_dir) and os.path.exists(actual_dir):
-		dir_diff = filecmp.dircmp(expected_dir, actual_dir)
-		diff_files = list(itertools.chain(dir_diff.diff_files, 
-			dir_diff.left_only, dir_diff.right_only))
-	else:
-		try:
-			diff_files = os.listdir(actual_dir)
-		except (OSError):
-			diff_files = os.listdir(expected_dir)
+def getFileSize(filePath):
+	if filePath == '/dev/null': return 0
+	return os.path.getsize(filePath)
 
-	if not diff_files:
-		return
-		
-	sb = []
-	if header:
-		sb.append(header)
-		
-	def safe_read_lines(path):
-		if not os.path.exists(path):
-			return []
-		f = open(path, encoding = 'utf8')
-		try:
-			return f.readlines()
-		finally:
-			f.close()
-			
-	for diff_file in diff_files:
-		expected_file = os.path.join(expected_dir, diff_file)
-		actual_file = os.path.join(actual_dir, diff_file)
-		
-		if os.path.isdir(expected_file) or os.path.isdir(actual_file):
-			#print(expected_file)
-			#print(actual_file)
-			continue
-			raise RuntimeError("Unexpected sub dir")
-			
-		diff = difflib.unified_diff(
-		#diff = difflib.context_diff(
-			safe_read_lines(expected_file),
-			safe_read_lines(actual_file),
-			fromfile=expected_file, 
-			tofile=actual_file)
-		sb.extend(diff)
+def compareDirectories(prevVersionDirectory, directory):
+	numAdditions = 0
+	numRemovals = 0
+	numFilesChanged = 0
+	numFilesChangedBytes = 0
+	numCodeAdditions = 0
+	numCodeRemovals = 0
+	numCodeFilesChanged = 0
+	numCodeFilesChangedBytes = 0
 
-	return "".join(sb)
-	#self.fail(msg="".join(sb))
+	if prevVersionDirectory == '': return {
+		'Additions': numAdditions,
+		'Removals': numRemovals,
+		'FilesChanged': numFilesChanged,
+		'FilesChangedBytes': numFilesChangedBytes,
+		'CodeAdditions': numCodeAdditions,
+		'CodeRemovals': numCodeRemovals,
+		'CodeFilesChanged': numCodeFilesChanged,
+		'CodeFilesChangedBytes': numCodeFilesChangedBytes,
+	}
+
+	cmd = 'git --no-pager diff --no-index --minimal --numstat ' + prevVersionDirectory + ' ' + directory
+	print(cmd)
+	output = terminal(cmd)
+	lines = output.split('\n')
+	for line in lines:
+		match = re.match(r'^([0-9]+|-)\s+([0-9]+|-)\s+(.+)', line)
+		if match is None: continue
+
+		additions = 0
+		removals = 0
+		try: # Accomodate the "-" (binary files, which we consider as 0 additions and 0 removals)
+			additions = int(match.group(1))
+		except: pass
+		try:
+			removals = int(match.group(2))
+		except: pass
+
+		numAdditions += additions
+		numRemovals += removals
+		numFilesChanged += 1
+
+		# Example of path:
+		# match.group(3) = "{bitcoin-0.10.3 => bitcoin-0.10.4}/src/qt/locale/bitcoin_ru.ts"
+		path = match.group(3).split('=>')[1].replace('}', '').strip()
+		fileSize = getFileSize(path)
+		numFilesChangedBytes += fileSize
+		
+
+		extension = os.path.splitext(match.group(3))[1]
+		if re.match(isCodeFileRe, extension) is not None:
+			numCodeAdditions += additions
+			numCodeRemovals += removals
+			numCodeFilesChanged += 1
+			numCodeFilesChangedBytes += fileSize
+
+	return {
+		'Additions': numAdditions,
+		'Removals': numRemovals,
+		'FilesChanged': numFilesChanged,
+		'FilesChangedBytes': numFilesChangedBytes,
+		'CodeAdditions': numCodeAdditions,
+		'CodeRemovals': numCodeRemovals,
+		'CodeFilesChanged': numCodeFilesChanged,
+		'CodeFilesChangedBytes': numCodeFilesChangedBytes,
+	}
 
 
 def getDirectoryStats(directory, prevVersionDirectory):
@@ -163,10 +170,10 @@ def getDirectoryStats(directory, prevVersionDirectory):
 	for file in files:
 		filesSize += os.path.getsize(file)
 
-	codeFiles = listFiles('(.*\.cpp|.*\.h|.*\.py|.*\.c|.*\.sh)', directory, True)
+	codeFiles = listFiles(isCodeFileRe, directory, True)
 	codefilesSize = 0
 	for file in codeFiles:
-		codefilesSize += os.path.getsize(file)
+		codefilesSize += getFileSize(file)
 
 	extensionsDict = {}
 	for file in files:
@@ -183,26 +190,35 @@ def getDirectoryStats(directory, prevVersionDirectory):
 			extensions += ', '
 		extensions += key + ' (' + str(extensionsDict[key]) + ')'
 
-
-
-	a = compareDirectories(prevVersionDirectory, directory)
-	print(a)
-
+	comparison = compareDirectories(prevVersionDirectory, directory)
 
 	print(directory + ':')
-	print(len(files))
 	return {
 		'Directory': directory,
-		'Num files': len(files),
-		'Size files (B)': filesSize,
+		'Num all files': len(files),
+		'Size all files (B)': filesSize,
 		'Num code files (cpp, py, c, h, sh)': len(codeFiles),
 		'Size code files (B)': codefilesSize,
-		'Extenension histogram': extensions,
-		'Prev Version Comparison': 'git diff --numdiff'
+		'*': '*',
+		'All line additions': str(comparison['Additions']),
+		'All line removals': str(comparison['Removals']),
+		'All files changed': str(comparison['FilesChanged']),
+		'Ratio all files changed': str(comparison['FilesChanged'] / len(files)),
+		'All changed bytes': str(comparison['FilesChangedBytes']),
+		'Ratio all bytes changed': str(comparison['FilesChangedBytes'] / filesSize),
+		'* ': '*',
+		'Code line additions': str(comparison['CodeAdditions']),
+		'Code line removals': str(comparison['CodeRemovals']),
+		'Code files changed': str(comparison['CodeFilesChanged']),
+		'Ratio code files changed': str(comparison['CodeFilesChanged'] / len(codeFiles)),
+		'Code changed bytes': str(comparison['CodeFilesChangedBytes']),
+		'Ratio code bytes changed': str(comparison['CodeFilesChangedBytes'] / codefilesSize),
+		'*  ': '*',
+		'File extenension histogram': extensions,
 	}
 
 
-dirs = listDirectories(r'.*', False, False)
+dirs = listDirectories(r'bitcoin-.*', False, False)
 
 outputFileName = 'logDirectoryOutput.csv'
 outputFile = open(outputFileName, 'w')
@@ -215,7 +231,7 @@ for directory in dirs:
 	if not headerMade:
 		header = ''
 		for key in data:
-			header += '"' + key + '",'
+			header += '"' + key.strip() + '",'
 		outputFile.write(header + '\n')
 		headerMade = True
 
