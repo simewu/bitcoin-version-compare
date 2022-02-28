@@ -194,7 +194,7 @@ def getDirectoryStats(directory, prevVersionDirectory):
 
 	print(directory + ':')
 	return {
-		'Bitcoin Version': directory,
+		'Bitcoin Core Version': directory,
 		'Num all files': len(files),
 		'Size all files (B)': filesSize,
 		'Num code files (cpp, py, c, h, sh)': len(codeFiles),
