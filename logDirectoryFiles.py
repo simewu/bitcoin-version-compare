@@ -198,7 +198,7 @@ def getDirectoryStats(directory, prevVersionDirectory):
 		'Num code files (cpp, py, c, h, sh)': len(codeFiles),
 		'Size code files (B)': codefilesSize,
 		'Extenension histogram': extensions,
-		'Prev Version Comparison': 'blag'
+		'Prev Version Comparison': 'git diff --numdiff'
 	}
 
 
