@@ -122,7 +122,7 @@ def compareDirectories(prevVersionDirectory, directory):
 		'CodeFilesChangedBytes': 'N/A',
 	}
 
-	cmd = 'git --no-pager diff --no-index --minimal --numstat ' + prevVersionDirectory + ' ' + directory
+	cmd = 'git --no-pager diff --no-index --numstat ' + prevVersionDirectory + ' ' + directory
 	print(cmd)
 	output = terminal(cmd)
 	lines = output.split('\n')
@@ -198,6 +198,23 @@ def getDirectoryStats(directory, prevVersionDirectory):
 	comparison = compareDirectories(prevVersionDirectory, directory)
 
 	print(directory + ':')
+
+	ratioFilesChanged = comparison['FilesChanged']
+	if type(ratioFilesChanged) is not str:
+		ratioFilesChanged /= len(files)
+
+	ratioFilesChangedBytes = comparison['FilesChangedBytes']
+	if type(ratioFilesChangedBytes) is not str:
+		ratioFilesChangedBytes /= filesSize
+
+	ratioCodeFilesChanged = comparison['CodeFilesChanged']
+	if type(ratioCodeFilesChanged) is not str:
+		ratioCodeFilesChanged /= len(codeFiles)
+
+	ratioCodeFilesChangedBytes = comparison['CodeFilesChangedBytes']
+	if type(ratioCodeFilesChangedBytes) is not str:
+		ratioCodeFilesChangedBytes /= codefilesSize
+
 	return {
 		'Bitcoin Core Version': directory,
 		'Num all files': len(files),
@@ -208,16 +225,16 @@ def getDirectoryStats(directory, prevVersionDirectory):
 		'All line additions': str(comparison['Additions']),
 		'All line removals': str(comparison['Removals']),
 		'All files changed': str(comparison['FilesChanged']),
-		'Ratio all files changed': str(comparison['FilesChanged'] / len(files)),
+		'Ratio all files changed': str(ratioFilesChanged),
 		'All changed bytes': str(comparison['FilesChangedBytes']),
-		'Ratio all bytes changed': str(comparison['FilesChangedBytes'] / filesSize),
+		'Ratio all bytes changed': str(ratioFilesChangedBytes),
 		'* ': '*',
 		'Code line additions': str(comparison['CodeAdditions']),
 		'Code line removals': str(comparison['CodeRemovals']),
 		'Code files changed': str(comparison['CodeFilesChanged']),
-		'Ratio code files changed': str(comparison['CodeFilesChanged'] / len(codeFiles)),
+		'Ratio code files changed': str(ratioCodeFilesChanged),
 		'Code changed bytes': str(comparison['CodeFilesChangedBytes']),
-		'Ratio code bytes changed': str(comparison['CodeFilesChangedBytes'] / codefilesSize),
+		'Ratio code bytes changed': str(ratioCodeFilesChangedBytes),
 		'*  ': '*',
 		'File extenension histogram': extensions,
 	}
