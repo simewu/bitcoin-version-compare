@@ -2,8 +2,13 @@ import os
 import re
 import sys
 
-
-isCodeFileRe = r'(.*\.cpp|.*\.h|.*\.py|.*\.c|.*\.sh)'
+codeFileExtensions = ['cpp', 'py', 'c', 'h', 'sh', 'sol', 'go', 'c', 'js', 'java']
+isCodeFileRe = '('
+for ext in codeFileExtensions:
+	if isCodeFileRe != '(':
+		isCodeFileRe += '|'
+	isCodeFileRe += '.*\\.' + ext.lower()
+isCodeFileRe += ')'
 
 # Send a command to the terminal
 def terminal(cmd):
@@ -145,7 +150,7 @@ def compareDirectories(prevVersionDirectory, directory):
 		numFilesChangedBytes += fileSize
 		
 
-		extension = os.path.splitext(match.group(3))[1]
+		extension = os.path.splitext(match.group(3))[1].lower()
 		if re.match(isCodeFileRe, extension) is not None:
 			numCodeAdditions += additions
 			numCodeRemovals += removals
@@ -177,7 +182,7 @@ def getDirectoryStats(directory, prevVersionDirectory):
 
 	extensionsDict = {}
 	for file in files:
-		extension = os.path.splitext(file)[1]
+		extension = os.path.splitext(file)[1].lower()
 		if extension not in extensionsDict:
 			extensionsDict[extension] = 1
 		else:
@@ -197,7 +202,7 @@ def getDirectoryStats(directory, prevVersionDirectory):
 		'Bitcoin Core Version': directory,
 		'Num all files': len(files),
 		'Size all files (B)': filesSize,
-		'Num code files (cpp, py, c, h, sh)': len(codeFiles),
+		'Num code files (' + ', '.join(codeFileExtensions) + ')': len(codeFiles),
 		'Size code files (B)': codefilesSize,
 		'*': '*',
 		'All line additions': str(comparison['Additions']),
