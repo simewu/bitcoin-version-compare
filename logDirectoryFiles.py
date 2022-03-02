@@ -112,14 +112,14 @@ def compareDirectories(prevVersionDirectory, directory):
 	numCodeFilesChangedBytes = 0
 
 	if prevVersionDirectory == '': return {
-		'Additions': numAdditions,
-		'Removals': numRemovals,
-		'FilesChanged': numFilesChanged,
-		'FilesChangedBytes': numFilesChangedBytes,
-		'CodeAdditions': numCodeAdditions,
-		'CodeRemovals': numCodeRemovals,
-		'CodeFilesChanged': numCodeFilesChanged,
-		'CodeFilesChangedBytes': numCodeFilesChangedBytes,
+		'Additions': 'N/A',
+		'Removals': 'N/A',
+		'FilesChanged': 'N/A',
+		'FilesChangedBytes': 'N/A',
+		'CodeAdditions': 'N/A',
+		'CodeRemovals': 'N/A',
+		'CodeFilesChanged': 'N/A',
+		'CodeFilesChangedBytes': 'N/A',
 	}
 
 	cmd = 'git --no-pager diff --no-index --minimal --numstat ' + prevVersionDirectory + ' ' + directory
