@@ -2,7 +2,7 @@ import os
 import re
 import sys
 
-codeFileExtensions = ['cpp', 'py', 'c', 'h', 'sh', 'sol', 'go', 'c', 'js', 'java']
+codeFileExtensions = ['cpp', 'py', 'c', 'h', 'sh', 'go', 'c', 'js', 'java']
 isCodeFileRe = '('
 for ext in codeFileExtensions:
 	if isCodeFileRe != '(':
