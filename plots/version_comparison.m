@@ -27,7 +27,7 @@ set(gca, 'YGrid', 'on', 'YMinorGrid', 'on');
 %set(gca, 'XTick',x_avg, 'XTickLabel', x_avg_real, 'YGrid', 'on', 'YMinorGrid', 'on');
 set(gca,'FontSize', fontSize);
 
-legend('Bytes of code', 'Number of code files', 'Location', 'NorthWest', 'NumColumns', 2)
+legend('Bytes of code', 'Number of files', 'Location', 'NorthWest', 'NumColumns', 2)
 % ax = gca
 % ax.XAxis.FontSize = fontSize;
 % ax.YAxis.FontSize = fontSize;
