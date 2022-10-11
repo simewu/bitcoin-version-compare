@@ -147,7 +147,7 @@ elseif plotNum == 3
     %set(gca, 'XTick',x_avg, 'XTickLabel', x_avg_real, 'YGrid', 'on', 'YMinorGrid', 'on');
     set(gca,'FontSize', fontSize);
     
-    legend('Proof Generation', 'Proof Verification', 'Location', 'NorthWest', 'NumColumns', 2)
+    legend('Proof Generation', 'Proof verification', 'Location', 'NorthWest', 'NumColumns', 1)
     % ax = gca
     % ax.XAxis.FontSize = fontSize;
     % ax.YAxis.FontSize = fontSize;
