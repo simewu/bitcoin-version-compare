@@ -118,7 +118,7 @@ int main() {
 	directories.push_back("bitcoin-23.0");
 
 	for(int d = 0; d < directories.size(); d++) {
-		std::string directory = directories.at(d) + "/src";
+		std::string directory = "../" + directories.at(d) + "/src";
 		std::cout << "Processing directory \"" << directory << "\"..." << std::endl;
 
 		std::string regexToIncludeStr = ".*(\\.cpp|\\.c|\\.h|\\.cc|\\.py|\\.sh)";
@@ -132,7 +132,7 @@ int main() {
 			//totalBytes += getContents(files.at(i)).length();
 			hashes.at(i) = sha256(getContents(files.at(i)));
 
-			std::cout << "File \"" << files.at(i) << "\" has has \"" << hashes.at(i) << "\"" << std::endl;
+			//std::cout << "File \"" << files.at(i) << "\" has has \"" << hashes.at(i) << "\"" << std::endl;
 		}
 		// Set the initial ID
 		hashes.insert(hashes.begin(), "0000000000000000000000000000000000000000000000000000000000000000");

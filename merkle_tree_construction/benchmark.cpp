@@ -86,9 +86,6 @@ int main() {
 	std::string regexToIncludeStr = ".*(\\.cpp|\\.c|\\.h|\\.cc|\\.py|\\.sh)";
 	std::string regexToIgnoreStr = ".*(/build-aux/|/config/|-config.h|/minisketch/|/obj/|/qt/|/univalue/gen/|/zqm/).*";
 
-	
-	std::vector<std::string> files = getFiles(directory, regexToIncludeStr, regexToIgnoreStr);
-	int numFiles = files.size();
 
 	std::string fileName = "Algorithm_benchmark_" + std::to_string(numSamples) + ".csv";
 
@@ -146,8 +143,11 @@ int main() {
 	directories.push_back("bitcoin-23.0");
 
 	for(int d = 0; d < directories.size(); d++) {
-		std::string directory = directories.at(d) + "/src";
+		std::string directory = "../" + directories.at(d) + "/src";
 		std::cout << "Processing directory \"" << directory << "\"..." << std::endl;
+
+		std::vector<std::string> files = getFiles(directory, regexToIncludeStr, regexToIgnoreStr);
+		int numFiles = files.size();
 		
 		for(int s = 0; s < numSamples; s++) {
 			if(s % 10 == 0) std::cout << "Sample " << std::to_string(s) << std::endl;
@@ -226,7 +226,7 @@ int main() {
 
 			std::string row = "";
 
-			row += std::to_string(directory) + ",";
+			row += directory + ",";
 			row += std::to_string(msToReadAndHash) + ",";
 			row += std::to_string(msToFormTree) + ",";
 			row += std::to_string(msToGenerateProof) + ",";
