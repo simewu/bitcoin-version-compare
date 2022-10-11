@@ -8,7 +8,7 @@ data_str = readtable('logDirectoryOutput.csv');
 plotNum = 3
 
 
-fontSize = 16;
+fontSize = 24;
 f = figure;
 
 if plotNum == 1
@@ -25,8 +25,8 @@ if plotNum == 1
     xticklabels(x)
     
     xlabel('Bitcoin Core Version')
-    ylabel('Percentage Difference')
-    xtickangle(45);
+    ylabel('Difference (%)')
+    xtickangle(60);
     
     %axis square;
     ylim([0, 1])
@@ -39,8 +39,6 @@ if plotNum == 1
     % ax = gca
     % ax.XAxis.FontSize = fontSize;
     % ax.YAxis.FontSize = fontSize;
-    
-    f.Position = [100 100 1500 400];
 
 elseif plotNum == 2
     
@@ -60,7 +58,7 @@ elseif plotNum == 2
     tree_construction_ci = read_files_y_ci + make_tree_y_ci
     
     hold on;
-    bar(tree_construction, 'FaceColor', '#3381BD');
+    bar(tree_construction, 'FaceColor', '#026873');
 %     bar(read_files_y + make_tree_y + generate_proof_y + verify_proof_y, 'FaceColor', '#F00');
 %     bar(read_files_y + make_tree_y + generate_proof_y, 'FaceColor', '#0F0');
 %     bar(read_files_y + make_tree_y, 'FaceColor', '#00F');
@@ -86,8 +84,8 @@ elseif plotNum == 2
     xticklabels(x_str)
     
     xlabel('Bitcoin Core Version')
-    ylabel('Tree Construction (ms)')
-    xtickangle(45);
+    ylabel('Tree Assembly (ms)')
+    xtickangle(60);
     
     %axis square;
     %ylim([0, 1])
@@ -101,7 +99,6 @@ elseif plotNum == 2
     % ax.XAxis.FontSize = fontSize;
     % ax.YAxis.FontSize = fontSize;
     
-    f.Position = [100 100 1500 400];
 
 elseif plotNum == 3
     
@@ -132,13 +129,14 @@ elseif plotNum == 3
         plotConfidenceInterval(i, verify_proof_y(i), verify_proof_y_ci(i))
     end
     %ylim([70, 190])
+    ylim([0.02, 0.15])
 
     xticks(x)
     xticklabels(x_str)
     
     xlabel('Bitcoin Core Version')
-    ylabel('Tree Construction (ms)')
-    xtickangle(45);
+    ylabel('Time (ms)')
+    xtickangle(60);
     
     %axis square;
     %ylim([0, 1])
@@ -152,9 +150,10 @@ elseif plotNum == 3
     % ax.XAxis.FontSize = fontSize;
     % ax.YAxis.FontSize = fontSize;
     
-    f.Position = [100 100 1500 400];
 
 end
+
+f.Position = [100 100 1500 500];
 
 function plotConfidenceInterval(i, y, yci)
     ci_color = 'black'
