@@ -2,7 +2,7 @@ import os
 import re
 import sys
 
-codeFileExtensions = ['cpp', 'py', 'c', 'h', 'sh', 'go', 'c', 'js', 'java']
+codeFileExtensions = ['cpp', 'py', 'c', 'h', 'sh', 'c', 'js', 'java']
 isCodeFileRe = '('
 for ext in codeFileExtensions:
 	if isCodeFileRe != '(':
@@ -190,10 +190,16 @@ def getDirectoryStats(directory, prevVersionDirectory):
 	extensionsDict = dict(sorted(extensionsDict.items(), key=lambda item: item[1], reverse=True))
 
 	extensions = ''
+	extensionsCode = ''
 	for key in extensionsDict:
 		if len(extensions):
 			extensions += ', '
 		extensions += key + ' (' + str(extensionsDict[key]) + ')'
+
+		if key[1:] in codeFileExtensions:
+			if len(extensionsCode):
+				extensionsCode += ', '
+			extensionsCode += key + ' (' + str(extensionsDict[key]) + ')'
 
 	comparison = compareDirectories(prevVersionDirectory, directory)
 
@@ -237,6 +243,7 @@ def getDirectoryStats(directory, prevVersionDirectory):
 		'Ratio code bytes changed': str(ratioCodeFilesChangedBytes),
 		'*  ': '*',
 		'File extenension histogram': extensions,
+		'Code file extenension histogram': extensionsCode,
 	}
 
 

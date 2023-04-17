@@ -1,0 +1,2 @@
+Version,Construct leaves (ms),CI Construct leaves (ms),Form tree (ms),CI Form tree (ms),Generate proof (ms),CI Generate proof (ms),Verify proof (ms),CI Verify proof (ms),Number of files,CI Number of files,
+v23.0,279.0111177117711,0.06352896791795935,2.8986631663166014,0.0016396622819937932,0.05133383338333861,3.498133812768148e-05,0.06546074607461277,4.3314234767676035e-05,1000.0,0.0,
