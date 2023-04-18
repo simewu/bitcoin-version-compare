@@ -30,7 +30,8 @@ if plotNum == 0
     
     for i=1:length(x)
         %swapped colors: plotExtensionHistogram(i + xoffset, y(i), extensions(i), {"cpp" "h" "py" "sh" "c"}, {"#025E73" "#011F26" "#BFB78F" "#F5D06C", "#F2A71B", "#FFFFFF"})
-        plotExtensionHistogram(i + xoffset, y(i), extensions(i), {"cpp" "cc" "h" "py" "sh" "c"}, {"#F2A71B" "#F5D06C" "#BFB78F" "#025E73" "#3DB6F5" "#011F26"})
+        %plotExtensionHistogram(i + xoffset, y(i), extensions(i), {"cpp" "cc" "h" "py" "sh" "mk" "c"}, {"#F2A71B" "#F5D06C" "#BFB78F" "#B1FFF8" "#3DB6F5" "#025E73" "#011F26" })
+        plotExtensionHistogram(i + xoffset, y(i), extensions(i), {"cpp" "cc"}, {"#F2A71B" "#F5D06C" "#FFFFFF"})
     end
 
     %xticks(1:length(x))
@@ -272,7 +273,7 @@ function plotExtensionHistogram(x, y, extensionString, ordering, colors)
     %text(x, y + 20, int2str(y), 'HorizontalAlignment', 'center', 'VerticalAlignment', 'baseline', 'FontSize', 12)
     text(x, totalFiles + 20, int2str(totalFiles), 'HorizontalAlignment', 'center', 'VerticalAlignment', 'baseline', 'FontSize', 12)
 
-    bars = [bars otherBar]
+    %bars = [bars otherBar]
     %ordering = [ordering "Other code files"]
     legend(bars, ordering, 'Location', 'NorthWest', 'Orientation', 'vertical', 'NumColumns', 7)
 end

@@ -83,7 +83,7 @@ void updateHashAtIndex(merkle::Tree &tree, int index, std::string hash_string) {
 
 int main() {
 	int numSamples = 1000;
-	std::string regexToIncludeStr = ".*(\\.cpp|\\.cc|\\.h|\\.py|\\.sh|\\.c)";
+	std::string regexToIncludeStr = ".*(\\.cpp|\\.cc|\\.py\\.h|\\.sh|\\.c|\\.java|\\.mk)";
 	std::string regexToIgnoreStr = ".*(/build-aux/|/config/|-config.h|/minisketch/|/obj/|/qt/|/univalue/gen/|/zqm/).*";
 
 
