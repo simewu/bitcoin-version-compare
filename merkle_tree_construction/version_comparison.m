@@ -1,6 +1,6 @@
-data = readmatrix('logDirectoryOutput.csv');
-data2 = readmatrix('Algorithm_benchmark_CI_output.csv')
-data_str = readtable('logDirectoryOutput.csv');
+data = readmatrix('logDirectoryOutput.csv', 'Encoding', 'UTF-8', 'delimiter', ',');
+data2 = readmatrix('Algorithm_benchmark_CI_output.csv', 'Encoding', 'UTF-8', 'delimiter', ',')
+data_str = readtable('logDirectoryOutput.csv', 'Encoding', 'UTF-8', 'delimiter', ',');
 
 % plotNum = 0 = File distribution
 % plotNum = 1 = Percent code files / bytes changed
@@ -9,7 +9,7 @@ data_str = readtable('logDirectoryOutput.csv');
 plotNum = 0
 
 
-fontSize = 28;
+fontSize = 21;
 f = figure;
 
 
@@ -18,6 +18,12 @@ xoffset = 0.3
 x_str = extractAfter(table2array(data_str(1:end, 1)), 8)
 x_str_m1 = extractAfter(table2array(data_str(1:end-1, 1)), 8)
 x_str_m2 = extractAfter(table2array(data_str(2:end, 1)), 8)
+
+% If the string ends with /src, then run the following:
+% x_str = extractBefore(x_str, "/src")
+% x_str_m1 = extractBefore(x_str_m1, "/src")
+% x_str_m2 = extractBefore(x_str_m2, "/src")
+
 if plotNum == 0
     
     x = 1:length(x_str)
@@ -30,8 +36,7 @@ if plotNum == 0
     
     for i=1:length(x)
         %swapped colors: plotExtensionHistogram(i + xoffset, y(i), extensions(i), {"cpp" "h" "py" "sh" "c"}, {"#025E73" "#011F26" "#BFB78F" "#F5D06C", "#F2A71B", "#FFFFFF"})
-        %plotExtensionHistogram(i + xoffset, y(i), extensions(i), {"cpp" "cc" "h" "py" "sh" "mk" "c"}, {"#F2A71B" "#F5D06C" "#BFB78F" "#B1FFF8" "#3DB6F5" "#025E73" "#011F26" })
-        plotExtensionHistogram(i + xoffset, y(i), extensions(i), {"cpp" "cc"}, {"#F2A71B" "#F5D06C" "#FFFFFF"})
+        plotExtensionHistogram(i + xoffset, y(i), extensions(i), {"cpp" "h" "py" "cc" "sh" "mk" "c"}, {"#F5AB54" "#F5D06C" "#FFF59E" "#76FEFF" "#3CAFF4" "#2740BA" "#35195E" })
     end
 
     %xticks(1:length(x))
@@ -46,7 +51,7 @@ if plotNum == 0
     
     %axis square;
     xlim([1 - 0.6 + xoffset, length(y) + 0.6 + xoffset])
-    ylim([0, 1500])
+    ylim([0, 1150])
     set(gca, 'YGrid', 'on', 'YMinorGrid', 'on');
     %set(gca, 'XScale', 'log');
     %set(gca, 'XScale', 'log', 'XTick',x_avg, 'XTickLabel', x_avg, 'YGrid', 'on', 'YMinorGrid', 'on');
@@ -82,14 +87,14 @@ elseif plotNum == 1
     xticks(1:length(x))
     xticklabels(x)
     
-    xlabel('Bitcoin Core Version')
+    xlabel('Bitcoin Core Version Comparison')
     ylabel('Difference (%)')
     yticks([0, 25, 50, 75, 100])
     xtickangle(60);
     
     %axis square;
     xlim([1 - 0.6 + xoffset, length(y) + 0.6 + xoffset])
-    ylim([0, 110])
+    ylim([0, 115])
     set(gca, 'YGrid', 'on', 'YMinorGrid', 'on');
     %set(gca, 'XScale', 'log', 'XTick',x_avg, 'XTickLabel', x_avg, 'YGrid', 'on', 'YMinorGrid', 'on');
     %set(gca, 'XTick',x_avg, 'XTickLabel', x_avg_real, 'YGrid', 'on', 'YMinorGrid', 'on');
@@ -137,7 +142,7 @@ elseif plotNum == 2
     end
 
     xlim([1 - 0.6 + xoffset, length(x) + 0.6 + xoffset])
-    ylim([60, 200])
+    ylim([60, 210])
     yticks([40:20:240])
     
     %set(gca, 'YScale', 'log');
@@ -191,7 +196,7 @@ elseif plotNum == 3
     end
     xlim([1 - 0.6 + xoffset, length(x) + 0.6 + xoffset])
     %ylim([70, 190])
-    ylim([0.03, 0.07])
+    ylim([0.02, 0.12])
     yticks([0.03:0.01:0.12])
 
     xticks(x)
@@ -216,11 +221,16 @@ elseif plotNum == 3
 
 end
 
+
+box on;
+
 if plotNum == 1
-    f.Position = [100 10 1700 610 + 170];
+    f.Position = [100 10 1700 610 + 70];
 else
     f.Position = [100 10 1700 610];
 end
+% f.Position = [100 10 1700 610];
+
 
 function plotConfidenceInterval(i, y, yci)
     ci_color = 'black'
@@ -247,7 +257,8 @@ function plotExtensionHistogram(x, y, extensionString, ordering, colors)
         num = extensionStruct.(keys{i})
         totalFiles = totalFiles + num
     end
-    otherBar = bar(x, totalFiles, 'FaceColor', '#FFF')
+    % Other bar:
+    %otherBar = bar(x, totalFiles, 'FaceColor', '#FFF')
 
     sum = 0
     for i=1:length(ordering)
@@ -273,6 +284,7 @@ function plotExtensionHistogram(x, y, extensionString, ordering, colors)
     %text(x, y + 20, int2str(y), 'HorizontalAlignment', 'center', 'VerticalAlignment', 'baseline', 'FontSize', 12)
     text(x, totalFiles + 20, int2str(totalFiles), 'HorizontalAlignment', 'center', 'VerticalAlignment', 'baseline', 'FontSize', 12)
 
+    % Other bar:
     %bars = [bars otherBar]
     %ordering = [ordering "Other code files"]
     legend(bars, ordering, 'Location', 'NorthWest', 'Orientation', 'vertical', 'NumColumns', 7)

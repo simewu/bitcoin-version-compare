@@ -8,6 +8,9 @@
 #include <string>
 #include <vector>
 
+#define DEBUG_JUST_PRINT_FILES false
+#define NUM_SAMPLES 1000
+
 // Computes the SHA-256 hash of a string
 std::string sha256(const std::string str)
 {
@@ -82,12 +85,11 @@ void updateHashAtIndex(merkle::Tree &tree, int index, std::string hash_string) {
 
 
 int main() {
-	int numSamples = 1000;
-	std::string regexToIncludeStr = ".*(\\.cpp|\\.cc|\\.py\\.h|\\.sh|\\.c|\\.java|\\.mk)";
-	std::string regexToIgnoreStr = ".*(/build-aux/|/config/|-config.h|/minisketch/|/obj/|/qt/|/univalue/gen/|/zqm/).*";
+	std::string regexToIncludeStr = ".*(\\.cpp|\\.cc|\\.py|\\.h|\\.sh|\\.c|\\.java|\\.mk)";
+	std::string regexToIgnoreStr = ".*(/build-aux/|/config/|-config\\.h|/minisketch/|/obj/|/qt/|/univalue/gen/|/zqm/).*";
 
 
-	std::string fileName = "Algorithm_benchmark_" + std::to_string(numSamples) + ".csv";
+	std::string fileName = "Algorithm_benchmark_" + std::to_string(NUM_SAMPLES) + ".csv";
 
 	std::ofstream outputFile;
 	outputFile.open(fileName);
@@ -140,7 +142,19 @@ int main() {
 	directories.push_back("bitcoin-0.21.0");
 	directories.push_back("bitcoin-0.21.1");
 	directories.push_back("bitcoin-22.0");
+	directories.push_back("bitcoin-22.1");
 	directories.push_back("bitcoin-23.0");
+	directories.push_back("bitcoin-23.1");
+	directories.push_back("bitcoin-24.0.1");
+
+	if(DEBUG_JUST_PRINT_FILES) {
+		std::string directory = "../" + directories.at(directories.size() - 1) + "/src";
+		std::vector<std::string> files = getFiles(directory, regexToIncludeStr, regexToIgnoreStr);
+		for(int i = 0; i < files.size(); i++) {
+			std::cout << files.at(i) << std::endl;
+		}
+		throw "DEBUG_JUST_PRINT_FILES flag was set";
+	}
 
 	for(int d = 0; d < directories.size(); d++) {
 		std::string directory = "../" + directories.at(d) + "/src";
@@ -149,7 +163,7 @@ int main() {
 		std::vector<std::string> files = getFiles(directory, regexToIncludeStr, regexToIgnoreStr);
 		int numFiles = files.size();
 		
-		for(int s = 0; s < numSamples; s++) {
+		for(int s = 0; s < NUM_SAMPLES; s++) {
 			if(s % 10 == 0) std::cout << "Sample " << std::to_string(s) << std::endl;
 
 			std::clock_t t1_readHashContents = std::clock();
@@ -157,7 +171,6 @@ int main() {
 			std::vector<std::string> files = getFiles(directory, regexToIncludeStr, regexToIgnoreStr);
 			std::vector<std::string> hashes (files.size());
 			// Compute the hash of the files
-			
 			for(int i = 0; i < files.size(); i++) {
 				hashes.at(i) = sha256(getContents(files.at(i)));
 
@@ -171,6 +184,7 @@ int main() {
 			hashes.insert(hashes.begin(), "0000000000000000000000000000000000000000000000000000000000000000");
 			// Adjust the size to make it a full binary tree
 			int targetSize = nextPowerOfTwo(hashes.size()), i = 0;
+			//std::cout << "    From " << hashes.size() << " to " << targetSize << std::endl; break;
 			while(hashes.size() < targetSize) {
 				hashes.push_back(hashes.at(i));
 				i++;
@@ -181,9 +195,6 @@ int main() {
 			// for(int i = 0; i < 16; i++) {
 			// 	hashes.at(i) = sha256(to_string(i + 1));
 			// }
-
-
-
 
 			// Convert the hashes to Merkle node objects
 			std::vector<merkle::Tree::Hash> leaves (hashes.size());
