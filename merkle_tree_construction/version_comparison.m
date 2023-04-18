@@ -6,7 +6,7 @@ data_str = readtable('logDirectoryOutput.csv');
 % plotNum = 1 = Percent code files / bytes changed
 % plotNum = 2 = Proof Generation
 % plotNum = 3 = Proof Verification
-plotNum = 3
+plotNum = 0
 
 
 fontSize = 28;
@@ -30,7 +30,7 @@ if plotNum == 0
     
     for i=1:length(x)
         %swapped colors: plotExtensionHistogram(i + xoffset, y(i), extensions(i), {"cpp" "h" "py" "sh" "c"}, {"#025E73" "#011F26" "#BFB78F" "#F5D06C", "#F2A71B", "#FFFFFF"})
-        plotExtensionHistogram(i + xoffset, y(i), extensions(i), {"cpp" "h" "py" "sh" "c"}, {"#F2A71B" "#F5D06C" "#BFB78F" "#025E73", "#011F26", "#FFFFFF"})
+        plotExtensionHistogram(i + xoffset, y(i), extensions(i), {"cpp" "cc" "h" "py" "sh" "c"}, {"#F2A71B" "#F5D06C" "#BFB78F" "#025E73" "#3DB6F5" "#011F26"})
     end
 
     %xticks(1:length(x))
